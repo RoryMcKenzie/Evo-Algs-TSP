@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class Individual {
 	
@@ -9,7 +10,7 @@ public class Individual {
 	public Individual() {
 		
 	}
-	
+
 	public Individual(Problem problem) {
 		depot = problem.depot;
 		chromosome = new ArrayList<>();

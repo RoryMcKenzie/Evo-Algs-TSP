@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Problem {
+	//Starting location
 	Location depot;
 	ArrayList<Location> customers;
 	
