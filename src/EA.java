@@ -16,11 +16,11 @@ public class EA extends Observable implements Runnable {
 	Individual best;
 	int popSize = 500;
 	int tournamentSize = 5;
-	int maxGenerations = 5000;
+	int maxGenerations = 1000;
 	int generation;
 	int pause = 0;// set to zero for max speed
 	double mutationRate = 0.5;
-	private ArrayList<EA> islands;
+	//private ArrayList<EA> islands;
 
 	@Override
 	public void run() {
@@ -43,8 +43,10 @@ public class EA extends Observable implements Runnable {
 			
 			
 			ArrayList<Individual> pop2 = new ArrayList<>();
-			if(generation % 100 == 0) {
-				System.out.println("do the hussle");
+
+			//seems to all be island-related, can be commented out
+			/*if(generation % 100 == 0) {
+				System.out.println("swap");
 				synchronized (lock) {
 					//same island or in loop different .... original was same island and popsize / 10
 					int idx = random.nextInt(islands.size());
@@ -60,7 +62,7 @@ public class EA extends Observable implements Runnable {
 //						pop2.add(ea.population.get(random.nextInt(popSize)));
 //					}
 				}				
-			}
+			} */
 			// elitism
 			
 			pop2.add(best.copy());
@@ -107,15 +109,15 @@ public class EA extends Observable implements Runnable {
 			setChanged();
 			notifyObservers(bestCandidate);
 		}
-		Individual theIslandBest = null;
-		for(EA ea : islands) {
+		/*Individual theIslandBest = null;
+		 for(EA ea : islands) {
 			if(theIslandBest == null || ea.best.fitness < theIslandBest.fitness) {
 				theIslandBest = ea.best;
 			}
-		}
+		} */
 		setChanged();
 		notifyObservers(best);
-		System.out.println(theIslandBest.fitness);
+		//System.out.println(theIslandBest.fitness);
 	}
 
 	private ArrayList<Individual> mutate2Opt(ArrayList<Individual> children) {
@@ -124,7 +126,7 @@ public class EA extends Observable implements Runnable {
 			int cut1 = random.nextInt(child.chromosome.size() - 1);
 			int cut2 = cut1 + random.nextInt(child.chromosome.size() - cut1);
 			Individual individual = new Individual(problem);
-			int i = 0;
+			int i;
 			for (i = 0; i < cut1; i++) {
 				individual.chromosome.set(i, child.chromosome.get(i));
 			}
@@ -236,7 +238,7 @@ public class EA extends Observable implements Runnable {
 		for (int i = 0; i < parent1.chromosome.size(); i++) {
 			if (child1.chromosome.get(i) == null) {
 				Boolean filled = false;
-				// this value is already in the child as it wasnt set in previous steps
+				// this value is already in the child as it wasn't set in previous steps
 				Location locFromParent = parent1.chromosome.get(i);
 				while (!filled) {
 					// look up the corresponding mapped value (the value at the same position in the
@@ -258,7 +260,7 @@ public class EA extends Observable implements Runnable {
 		for (int i = 0; i < parent1.chromosome.size(); i++) {
 			if (child2.chromosome.get(i) == null) {
 				Boolean filled = false;
-				// this value is already in the child as it wasnt set in previous steps
+				// this value is already in the child as it wasn't set in previous steps
 				Location locFromParent = parent2.chromosome.get(i);
 				while (!filled) {
 					// look up the corresponding mapped value (the value at the same position in the
@@ -314,7 +316,7 @@ public class EA extends Observable implements Runnable {
 
 	}
 
-	// simple crossover. Probably not very good. Long winded with customer indices
+	// simple crossover. Probably not very good. Long-winded with customer indices
 	private ArrayList<Individual> crossover(Individual parent1, Individual parent2) {
 		Individual child = new Individual();
 		child.depot = parent1.depot.copy();
@@ -393,18 +395,18 @@ public class EA extends Observable implements Runnable {
 
 	public static void main(String[] args) {
 		
-		ArrayList<EA> islands = new ArrayList<>();
+		//ArrayList<EA> islands = new ArrayList<>();
 		for(int i = 0; i < 20; i++) {
 			Gui gui = new Gui(i);
 			EA ea = new EA();
-			islands.add(ea);
+			//islands.add(ea);
 			ea.addObserver(gui);
 			Thread t = new Thread(ea);
 			t.start();			
 		}
-		for(EA ea : islands) {
+		/*for(EA ea : islands) {
 			ea.islands = islands;
-		}			
+		}			*/
 	}
 
 }
