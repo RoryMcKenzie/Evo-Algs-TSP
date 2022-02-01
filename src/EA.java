@@ -122,6 +122,8 @@ public class EA extends Observable implements Runnable {
 		//System.out.println(theIslandBest.fitness);
 	}
 
+
+	//2-opt mutation
 	private ArrayList<Individual> mutate2Opt(ArrayList<Individual> children) {
 		ArrayList<Individual> result = new ArrayList<>();
 		for (Individual child : children) {
@@ -177,7 +179,6 @@ public class EA extends Observable implements Runnable {
 
 	// swap two locations
 	private ArrayList<Individual> mutate(ArrayList<Individual> children) {
-		
 		for (Individual child : children) {
 			Location temp;
 			int idx1 = random.nextInt(child.chromosome.size());
@@ -193,9 +194,11 @@ public class EA extends Observable implements Runnable {
 	private ArrayList<Individual> orderCrossover(Individual parent1, Individual parent2) {
 		int size = parent1.chromosome.size();
 
+		//generate cut points
 		int oxPoint1 = random.nextInt(parent1.chromosome.size());
 		int oxPoint2 = random.nextInt(parent1.chromosome.size());
 
+		//swap cut points if the second > the first
 		if (oxPoint1 > oxPoint2) {
 			int temp = oxPoint1;
 			oxPoint1 = oxPoint2;
@@ -214,28 +217,27 @@ public class EA extends Observable implements Runnable {
 		oxchild1.chromosome.addAll(parent1.chromosome.subList(oxPoint1,oxPoint2));
 		oxchild2.chromosome.addAll(parent2.chromosome.subList(oxPoint1,oxPoint2));
 
-		int currentAlleleIndex = 0;
-		Location currentLocationInParent1;
-		Location currentLocationInParent2;
+		//declare variables for loop
+		int currentIndex = 0;
 
 		for (int i = 0; i <= size; i++){
-			currentAlleleIndex = (oxPoint1 + i) % size;
-			currentLocationInParent1 = parent1.chromosome.get(currentAlleleIndex);
-			currentLocationInParent2 = parent2.chromosome.get(currentAlleleIndex);
+			currentIndex = (oxPoint1 + i) % size;
 
-			//location is being added even if the chromosome contains it already, some problem with .contains() method
-			if(!oxchild1.contains(parent2.chromosome.get(currentAlleleIndex))){
-				oxchild1.chromosome.add(currentLocationInParent2);
+			//if the current location in the parent isn't present in the child, it is added
+			if(!oxchild1.contains(parent2.chromosome.get(currentIndex))){
+				oxchild1.chromosome.add(parent2.chromosome.get(currentIndex));
 			}
 
-			if(!oxchild2.contains(parent1.chromosome.get(currentAlleleIndex))){
-				oxchild2.chromosome.add(currentLocationInParent1);
+			if(!oxchild2.contains(parent1.chromosome.get(currentIndex))){
+				oxchild2.chromosome.add(parent1.chromosome.get(currentIndex));
 			}
 		}
 
+		//rotate both children so they start at the correct place
 		Collections.rotate(oxchild1.chromosome,oxPoint1);
 		Collections.rotate(oxchild2.chromosome,oxPoint1);
 
+		//create children object to be returned by the method
 		ArrayList<Individual> children = new ArrayList<>();
 		children.add(oxchild1);
 		children.add(oxchild2);
@@ -246,6 +248,7 @@ public class EA extends Observable implements Runnable {
 		//generate start and end numbers to cut
 		int xPoint1 = random.nextInt(parent1.chromosome.size());
 		int xPoint2 = random.nextInt(parent1.chromosome.size());
+		//swap cut points if the second > the first
 		if (xPoint1 > xPoint2) {
 			int temp = xPoint1;
 			xPoint1 = xPoint2;
