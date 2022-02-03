@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Observable;
-import java.util.Random;
+import java.util.*;
 
 public class EA extends Observable implements Runnable {
 
@@ -80,9 +77,9 @@ public class EA extends Observable implements Runnable {
 
 				if (random.nextDouble() < mutationRate) {
 					if (random.nextBoolean()) {
-						children = mutate2Opt(children);
+						children = mutateScramble(children);
 					} else {
-						children = mutate(children);
+						children = mutateScramble(children);
 					}
 				}
 
@@ -122,30 +119,6 @@ public class EA extends Observable implements Runnable {
 		//System.out.println(theIslandBest.fitness);
 	}
 
-
-	//2-opt mutation
-	private ArrayList<Individual> mutate2Opt(ArrayList<Individual> children) {
-		ArrayList<Individual> result = new ArrayList<>();
-		for (Individual child : children) {
-			int cut1 = random.nextInt(child.chromosome.size() - 1);
-			int cut2 = cut1 + random.nextInt(child.chromosome.size() - cut1);
-			Individual individual = new Individual(problem);
-			int i;
-			for (i = 0; i < cut1; i++) {
-				individual.chromosome.set(i, child.chromosome.get(i));
-			}
-			for (int k = cut2; k >= cut1; k--) {
-				individual.chromosome.set(i, child.chromosome.get(k));
-				i++;
-			}
-			for (i = cut2 + 1; i < individual.chromosome.size(); i++) {
-				individual.chromosome.set(i, child.chromosome.get(i));
-			}
-			result.add(individual);
-		}
-		return result;
-	}
-
 	private void printStats(int generation) {
 		System.out.println(generation + "\t" + best.fitness);
 	}
@@ -177,8 +150,33 @@ public class EA extends Observable implements Runnable {
 		}
 	}
 
-	// swap two locations
-	private ArrayList<Individual> mutate(ArrayList<Individual> children) {
+	//MUTATION
+
+	//2-opt mutation
+	private ArrayList<Individual> mutate2Opt(ArrayList<Individual> children) {
+		ArrayList<Individual> result = new ArrayList<>();
+		for (Individual child : children) {
+			int cut1 = random.nextInt(child.chromosome.size() - 1);
+			int cut2 = cut1 + random.nextInt(child.chromosome.size() - cut1);
+			Individual individual = new Individual(problem);
+			int i;
+			for (i = 0; i < cut1; i++) {
+				individual.chromosome.set(i, child.chromosome.get(i));
+			}
+			for (int k = cut2; k >= cut1; k--) {
+				individual.chromosome.set(i, child.chromosome.get(k));
+				i++;
+			}
+			for (i = cut2 + 1; i < individual.chromosome.size(); i++) {
+				individual.chromosome.set(i, child.chromosome.get(i));
+			}
+			result.add(individual);
+		}
+		return result;
+	}
+
+	// swap mutation
+	private ArrayList<Individual> mutateSwap(ArrayList<Individual> children) {
 		for (Individual child : children) {
 			Location temp;
 			int idx1 = random.nextInt(child.chromosome.size());
@@ -190,6 +188,33 @@ public class EA extends Observable implements Runnable {
 		}
 		return children;
 	}
+
+	private ArrayList<Individual> mutateScramble(ArrayList<Individual> children){
+		for (Individual child : children){
+			int scrambleCut1 = random.nextInt(child.chromosome.size());
+			int scrambleCut2 = random.nextInt(child.chromosome.size());
+
+			//swap cut points if the second > the first
+			if (scrambleCut1 > scrambleCut2) {
+				int temp = scrambleCut1;
+				scrambleCut1 = scrambleCut2;
+				scrambleCut2 = temp;
+			}
+
+			List<Location> x = child.chromosome.subList(scrambleCut1, scrambleCut2);
+
+			Collections.shuffle(x);
+
+			/*int j = 0;
+			for (int i = scrambleCut1; i < scrambleCut2; i++){
+				child.chromosome.set(i, x.get(j));
+				j++;
+			} */
+		}
+		return children;
+	}
+
+	//CROSSOVER
 
 	private ArrayList<Individual> orderCrossover(Individual parent1, Individual parent2) {
 		int size = parent1.chromosome.size();
@@ -442,6 +467,7 @@ public class EA extends Observable implements Runnable {
 		return children;
 	}
 
+	//tournament selection
 	private Individual select() {
 		Individual winner = population.get(random.nextInt(popSize));
 		for (int i = 1; i < tournamentSize; i++) {
