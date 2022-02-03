@@ -68,19 +68,10 @@ public class EA extends Observable implements Runnable {
 				Individual parent2 = select();
 				ArrayList<Individual> children = null;
 				//randomly chooses between pmx or other crossover, probably best if it only uses one now
-				if (random.nextBoolean()) {
-					children = crossover(parent1, parent2);
-				} else {
-					//children = pmxCrossover(parent1, parent2);
-					children = orderCrossover(parent1, parent2);
-				}
+				children = orderCrossover(parent1, parent2);
 
 				if (random.nextDouble() < mutationRate) {
-					if (random.nextBoolean()) {
-						children = mutateScramble(children);
-					} else {
-						children = mutateScramble(children);
-					}
+						children = mutate2Opt(children);
 				}
 
 				for (Individual child : children) {
@@ -204,6 +195,31 @@ public class EA extends Observable implements Runnable {
 			List<Location> x = child.chromosome.subList(scrambleCut1, scrambleCut2);
 
 			Collections.shuffle(x);
+
+			/*int j = 0;
+			for (int i = scrambleCut1; i < scrambleCut2; i++){
+				child.chromosome.set(i, x.get(j));
+				j++;
+			} */
+		}
+		return children;
+	}
+
+	private ArrayList<Individual> mutateInvert(ArrayList<Individual> children){
+		for (Individual child : children){
+			int invertCut1 = random.nextInt(child.chromosome.size());
+			int invertCut2 = random.nextInt(child.chromosome.size());
+
+			//swap cut points if the second > the first
+			if (invertCut1 > invertCut2) {
+				int temp = invertCut1;
+				invertCut1 = invertCut2;
+				invertCut2 = temp;
+			}
+
+			List<Location> x = child.chromosome.subList(invertCut1, invertCut2);
+
+			Collections.reverse(x);
 
 			/*int j = 0;
 			for (int i = scrambleCut1; i < scrambleCut2; i++){
