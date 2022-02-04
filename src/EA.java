@@ -483,7 +483,11 @@ public class EA extends Observable implements Runnable {
 		return children;
 	}
 
-	//tournament selection
+	//SELECTION
+
+	//Add Roulette Selection, preliminary testing can figure out which is better
+
+	//Tournament Selection
 	private Individual select() {
 		Individual winner = population.get(random.nextInt(popSize));
 		for (int i = 1; i < tournamentSize; i++) {
