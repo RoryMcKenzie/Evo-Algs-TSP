@@ -68,7 +68,8 @@ public class EA extends Observable implements Runnable {
 				Individual parent2 = select();
 				ArrayList<Individual> children = null;
 				//randomly chooses between pmx or other crossover, probably best if it only uses one now
-				children = orderCrossover(parent1, parent2);
+				//Need to add code making it only do this sometimes, same as below code for mutation
+				children = pmxCrossover(parent1, parent2);
 
 				if (random.nextDouble() < mutationRate) {
 						children = mutate2Opt(children);
@@ -394,30 +395,67 @@ public class EA extends Observable implements Runnable {
 		return children;
 	}
 
-	/**
-	 * Return the customer in the same position in child2 as the customer defined by
-	 * locFromParent is in child1
-	 * 
-	 * @param child1
-	 * @param child2
-	 * @param locFromParent
-	 * @return
-	 */
-	private Location getMappedVal(Individual child1, Individual child2, Location locFromParent) {
+	private ArrayList<Individual> cycleCrossover(Individual parent1, Individual parent2){
+		int length = parent1.chromosome.size();
 
-		for (int i = 0; i < child1.chromosome.size(); i++) {
-			if (child1.chromosome.get(i) != null) {
-				if (child1.chromosome.get(i).idx == locFromParent.idx) {
-					return child2.chromosome.get(i);
+		//Initialise 2 children, set chromosome to parents' to make later easier
+		Individual cxchild1 = new Individual();
+		cxchild1.depot = parent1.depot;
+		cxchild1.chromosome = parent1.chromosome;
+		Individual cxchild2 = new Individual();
+		cxchild2.depot = parent1.depot;
+		cxchild2.chromosome = parent2.chromosome;
+
+		// the set of all visited indices so far
+		final Set<Integer> visitedIndices = new HashSet(length);
+		// the indices of the current cycle
+		final List<Integer> indices = new ArrayList(length);
+
+		int currentIndex = 0;
+		int cycle = 1;
+
+		while (visitedIndices.size() < length){
+			indices.add(currentIndex);
+
+			Location item = parent2.chromosome.get(currentIndex);
+			currentIndex = parent1.chromosome.indexOf(item);
+
+			//until it reaches the start again
+			while(currentIndex != indices.get(0)){
+				indices.add(currentIndex);
+				item = parent2.chromosome.get(currentIndex);
+				currentIndex = parent1.chromosome.indexOf(item);
+			}
+
+			// for even cycles: swap the child elements on the indices found in this cycle
+			if (cycle++ % 2 != 0){
+				for (int i : indices){
+					Location temp = cxchild1.chromosome.get(i);
+					cxchild1.chromosome.set(i, cxchild2.chromosome.get(i));
+					cxchild2.chromosome.set(i, temp);
 				}
 			}
+
+			visitedIndices.addAll(indices);
+			//find next starting index: last one + 1 until unvisited one
+			currentIndex = (indices.get(0) + 1) % length;
+			while(visitedIndices.contains(currentIndex) && visitedIndices.size() < length) {
+				currentIndex++;
+				if (currentIndex >= length){
+					currentIndex = 0;
+				}
+			}
+			indices.clear();
 		}
-
-		return null;
-
+		//create children object to be returned by the method
+		ArrayList<Individual> children = new ArrayList<>();
+		children.add(cxchild1);
+		children.add(cxchild2);
+		return children;
 	}
 
 	// simple crossover. Probably not very good. Long-winded with customer indices
+	//appears to just be one point crossover? won't use this but might keep
 	private ArrayList<Individual> crossover(Individual parent1, Individual parent2) {
 		Individual child = new Individual();
 		child.depot = parent1.depot.copy();
@@ -483,6 +521,28 @@ public class EA extends Observable implements Runnable {
 		return children;
 	}
 
+	/**
+	 * Return the customer in the same position in child2 as the customer defined by
+	 * locFromParent is in child1
+	 *
+	 * @param child1
+	 * @param child2
+	 * @param locFromParent
+	 * @return
+	 */
+	private Location getMappedVal(Individual child1, Individual child2, Location locFromParent) {
+
+		for (int i = 0; i < child1.chromosome.size(); i++) {
+			if (child1.chromosome.get(i) != null) {
+				if (child1.chromosome.get(i).idx == locFromParent.idx) {
+					return child2.chromosome.get(i);
+				}
+			}
+		}
+
+		return null;
+
+	}
 	//SELECTION
 
 	//Add Roulette Selection, preliminary testing can figure out which is better
