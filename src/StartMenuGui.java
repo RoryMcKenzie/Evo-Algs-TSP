@@ -6,13 +6,15 @@ public class StartMenuGui {
     private JButton startButton;
     private JPanel panel1;
     private JCheckBox GUICheckBox;
-    private JComboBox comboBox1;
-    private JComboBox comboBox2;
+    private JComboBox comboBoxMutation;
+    private JComboBox comboBoxCrossover;
 
     public StartMenuGui() {
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+                //use .getSelectedItem() for combobox to set crossover/mutation operators
 
                 for(int i = 0; i < 20; i++) {
                     Gui gui = new Gui(i);
@@ -22,9 +24,17 @@ public class StartMenuGui {
                     Thread t = new Thread(ea);
                     t.start();
                 }
-
             }
         });
+        comboBoxCrossover.addItem("PMX");
+        comboBoxCrossover.addItem("Order");
+        comboBoxCrossover.addItem("Cycle");
+
+        comboBoxMutation.addItem("Swap");
+        comboBoxMutation.addItem("Scramble");
+        comboBoxMutation.addItem("Invert");
+        comboBoxMutation.addItem("2-opt");
+
     }
 
     public static void main (String[] args){
@@ -34,16 +44,6 @@ public class StartMenuGui {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-
-        /*JFrame f=new JFrame();//creating instance of JFrame
-        //startButton.setSize(400,500);
-        JButton b=new JButton("click");//creating instance of JButton
-
-        f.add(b);//adding button in JFrame
-
-        f.setSize(400,500);//400 width and 500 height
-        f.setLayout(null);//using no layout managers
-        f.setVisible(true);//making the frame visible */
-
+        frame.setSize(500,300);
     }
 }
