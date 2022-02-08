@@ -14,14 +14,13 @@ public class StartMenuGui {
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                //use .getSelectedItem() for combobox to set crossover/mutation operators
-
                 for(int i = 0; i < 20; i++) {
-                    Gui gui = new Gui(i);
                     EA ea = new EA(comboBoxCrossover.getSelectedItem().toString(), comboBoxMutation.getSelectedItem().toString());
                     //islands.add(ea);
-                    ea.addObserver(gui);
+                    if (GUICheckBox.isSelected()) {
+                        Gui gui = new Gui(i);
+                        ea.addObserver(gui);
+                    }
                     Thread t = new Thread(ea);
                     t.start();
                 }
