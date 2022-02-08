@@ -10,20 +10,21 @@ public class StartMenuGui {
     private JComboBox comboBoxCrossover;
     private JSpinner spinnerIterations;
 
+
+    //Need to get it so each EA instance "returns" a value so the best EA out of 20 can be discovered as the best, so can be run multiple times
+    //This doesn't seem quite possible with Runnable
+    //Needs to be done so I can do something with the JSpinner
     public StartMenuGui() {
-        startButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                for(int i = 0; i < 20; i++) {
-                    EA ea = new EA(comboBoxCrossover.getSelectedItem().toString(), comboBoxMutation.getSelectedItem().toString());
-                    //islands.add(ea);
-                    if (GUICheckBox.isSelected()) {
-                        Gui gui = new Gui(i);
-                        ea.addObserver(gui);
-                    }
-                    Thread t = new Thread(ea);
-                    t.start();
+        startButton.addActionListener(e -> {
+            for(int i = 0; i < 20; i++) {
+                EA ea = new EA(comboBoxCrossover.getSelectedItem().toString(), comboBoxMutation.getSelectedItem().toString());
+                //islands.add(ea);
+                if (GUICheckBox.isSelected()) {
+                    Gui gui = new Gui(i);
+                    ea.addObserver(gui);
                 }
+                Thread t = new Thread(ea);
+                t.start();
             }
         });
         comboBoxCrossover.addItem("PMX");
@@ -34,11 +35,9 @@ public class StartMenuGui {
         comboBoxMutation.addItem("Scramble");
         comboBoxMutation.addItem("Invert");
         comboBoxMutation.addItem("2-opt");
-
     }
 
     public static void main (String[] args){
-
         JFrame frame = new JFrame("StartMenuGui");
         frame.setContentPane(new StartMenuGui().panel1);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

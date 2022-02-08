@@ -25,6 +25,7 @@ public class EA extends Observable implements Runnable {
 	int generation;
 	int pause = 0;// set to zero for max speed
 	double mutationRate = 0.5;
+	double crossoverRate = 0.85;
 	//private ArrayList<EA> islands;
 
 	@Override
@@ -74,24 +75,29 @@ public class EA extends Observable implements Runnable {
 				Individual parent1 = select();
 				Individual parent2 = select();
 				ArrayList<Individual> children = null;
-				//randomly chooses between pmx or other crossover, probably best if it only uses one now
-				//Need to add code making it only do this sometimes, same as below code for mutation
 
-				switch(crossover){
-					case "PMX":
-						children = pmxCrossover(parent1, parent2);
-						break;
+				if(random.nextDouble() < crossoverRate) {
+					switch (crossover) {
+						case "PMX":
+							children = pmxCrossover(parent1, parent2);
+							break;
 
-					case "Order":
-						children = orderCrossover(parent1, parent2);
-						break;
+						case "Order":
+							children = orderCrossover(parent1, parent2);
+							break;
 
-					case "Cycle":
-						children = cycleCrossover(parent1, parent2);
-						break;
+						case "Cycle":
+							children = cycleCrossover(parent1, parent2);
+							break;
 
-					default:
-						children = pmxCrossover(parent1,parent2);
+						default:
+							children = pmxCrossover(parent1, parent2);
+					}
+				} else {
+					ArrayList<Individual> temp = new ArrayList<>();
+					temp.add(parent1);
+					temp.add(parent2);
+					children = temp;
 				}
 
 				if (random.nextDouble() < mutationRate) {
@@ -151,6 +157,7 @@ public class EA extends Observable implements Runnable {
 		setChanged();
 		notifyObservers(best);
 		printStats(1000);
+		Thread.currentThread().interrupt();
 		//System.out.println(theIslandBest.fitness);
 	}
 
@@ -397,7 +404,6 @@ public class EA extends Observable implements Runnable {
 						locFromParent = locFromOtherChild;
 					}
 				}
-
 			}
 		}
 
@@ -419,7 +425,6 @@ public class EA extends Observable implements Runnable {
 						locFromParent = locFromOtherChild;
 					}
 				}
-
 			}
 		}
 		for (Location l : child1.chromosome) {
@@ -574,7 +579,6 @@ public class EA extends Observable implements Runnable {
 	 * @return
 	 */
 	private Location getMappedVal(Individual child1, Individual child2, Location locFromParent) {
-
 		for (int i = 0; i < child1.chromosome.size(); i++) {
 			if (child1.chromosome.get(i) != null) {
 				if (child1.chromosome.get(i).idx == locFromParent.idx) {
@@ -582,13 +586,11 @@ public class EA extends Observable implements Runnable {
 				}
 			}
 		}
-
 		return null;
-
 	}
 	//SELECTION
 
-	//Add Roulette Selection, preliminary testing can figure out which is better
+	//Add Roulette Selection, preliminary testing to figure out which is better
 
 	//Tournament Selection
 	private Individual select() {
