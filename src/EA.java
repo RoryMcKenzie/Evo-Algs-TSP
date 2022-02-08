@@ -2,6 +2,11 @@ import java.util.*;
 
 public class EA extends Observable implements Runnable {
 
+	public EA(String crossover, String mutation){
+		this.crossover = crossover;
+		this.mutation = mutation;
+	}
+
 	private static final Object lock = new Object();
 //	String filename = "dj38.tsp";
 //	String filename = "dsj1000.tsp";// optimal 18,659,688 or 1.8 E7 Concorde gets 18659
@@ -9,6 +14,8 @@ public class EA extends Observable implements Runnable {
 //	String filename = "burma14.tsp";
 	String filename = "berlin52.tsp";// 7542
 	Problem problem = new Problem(filename);
+	String mutation;
+	String crossover;
 	static Random random = new Random();
 	ArrayList<Individual> population;
 	Individual best;
@@ -69,10 +76,45 @@ public class EA extends Observable implements Runnable {
 				ArrayList<Individual> children = null;
 				//randomly chooses between pmx or other crossover, probably best if it only uses one now
 				//Need to add code making it only do this sometimes, same as below code for mutation
-				children = cycleCrossover(parent1, parent2);
+
+				switch(crossover){
+					case "PMX":
+						children = pmxCrossover(parent1, parent2);
+						break;
+
+					case "Order":
+						children = orderCrossover(parent1, parent2);
+						break;
+
+					case "Cycle":
+						children = cycleCrossover(parent1, parent2);
+						break;
+
+					default:
+						children = pmxCrossover(parent1,parent2);
+				}
 
 				if (random.nextDouble() < mutationRate) {
-						children = mutate2Opt(children);
+					switch(mutation){
+						case "Swap":
+							children = mutateSwap(children);
+							break;
+
+						case "Scramble":
+							children = mutateScramble(children);
+							break;
+
+						case "Invert":
+							children = mutateInvert(children);
+							break;
+
+						case "2-opt":
+							children = mutate2Opt(children);
+							break;
+
+						default:
+							children = mutateScramble(children);
+					}
 				}
 
 				for (Individual child : children) {
@@ -96,7 +138,7 @@ public class EA extends Observable implements Runnable {
 			if (bestCandidate.fitness < best.fitness) {
 				best = bestCandidate;
 			}
-			printStats(generation);
+			//printStats(generation);
 			setChanged();
 			notifyObservers(bestCandidate);
 		}
@@ -108,6 +150,7 @@ public class EA extends Observable implements Runnable {
 		} */
 		setChanged();
 		notifyObservers(best);
+		printStats(1000);
 		//System.out.println(theIslandBest.fitness);
 	}
 
@@ -560,7 +603,8 @@ public class EA extends Observable implements Runnable {
 	}
 
 	public static void main(String[] args) {
-		
+		/*
+
 		//ArrayList<EA> islands = new ArrayList<>();
 		for(int i = 0; i < 20; i++) {
 			Gui gui = new Gui(i);
@@ -573,6 +617,7 @@ public class EA extends Observable implements Runnable {
 		/*for(EA ea : islands) {
 			ea.islands = islands;
 		}			*/
+
 	}
 
 }

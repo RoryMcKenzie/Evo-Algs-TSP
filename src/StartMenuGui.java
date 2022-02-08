@@ -8,6 +8,7 @@ public class StartMenuGui {
     private JCheckBox GUICheckBox;
     private JComboBox comboBoxMutation;
     private JComboBox comboBoxCrossover;
+    private JSpinner spinnerIterations;
 
     public StartMenuGui() {
         startButton.addActionListener(new ActionListener() {
@@ -18,7 +19,7 @@ public class StartMenuGui {
 
                 for(int i = 0; i < 20; i++) {
                     Gui gui = new Gui(i);
-                    EA ea = new EA();
+                    EA ea = new EA(comboBoxCrossover.getSelectedItem().toString(), comboBoxMutation.getSelectedItem().toString());
                     //islands.add(ea);
                     ea.addObserver(gui);
                     Thread t = new Thread(ea);
