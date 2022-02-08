@@ -69,7 +69,7 @@ public class EA extends Observable implements Runnable {
 				ArrayList<Individual> children = null;
 				//randomly chooses between pmx or other crossover, probably best if it only uses one now
 				//Need to add code making it only do this sometimes, same as below code for mutation
-				children = pmxCrossover(parent1, parent2);
+				children = cycleCrossover(parent1, parent2);
 
 				if (random.nextDouble() < mutationRate) {
 						children = mutate2Opt(children);
