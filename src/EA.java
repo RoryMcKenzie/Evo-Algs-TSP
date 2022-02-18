@@ -9,13 +9,10 @@ public class EA extends Observable implements Runnable {
 	}
 
 	private static final Object lock = new Object();
-//	String filename = "dj38.tsp";
-//	String filename = "dsj1000.tsp";// optimal 18,659,688 or 1.8 E7 Concorde gets 18659
-//  String filename = "burma14.tsp";
-    String filename = "berlin52.tsp";// 7542
-	Problem problem = new Problem(filename);
+	String filename;
 	String mutation;
 	String crossover;
+	Problem problem;
 	static Random random = new Random();
 	ArrayList<Individual> population;
 	Individual best;
@@ -30,6 +27,7 @@ public class EA extends Observable implements Runnable {
 
 	@Override
 	public void run() {
+		problem = new Problem(filename);
 		population = new ArrayList<>();
 
 		// initialise population. The Individual constructor generates a random
@@ -44,8 +42,6 @@ public class EA extends Observable implements Runnable {
 
 		while (generation < maxGenerations) {
 			generation++;
-			
-			
 			
 			ArrayList<Individual> pop2 = new ArrayList<>();
 
@@ -74,25 +70,15 @@ public class EA extends Observable implements Runnable {
 			while (pop2.size() < popSize) {
 				Individual parent1 = select();
 				Individual parent2 = select();
-				ArrayList<Individual> children = null;
+				ArrayList<Individual> children;
 
 				if(random.nextDouble() < crossoverRate) {
-					switch (crossover) {
-						case "PMX":
-							children = pmxCrossover(parent1, parent2);
-							break;
-
-						case "Order":
-							children = orderCrossover(parent1, parent2);
-							break;
-
-						case "Cycle":
-							children = cycleCrossover(parent1, parent2);
-							break;
-
-						default:
-							children = pmxCrossover(parent1, parent2);
-					}
+					children = switch (crossover) {
+						case "PMX" -> pmxCrossover(parent1, parent2);
+						case "Order" -> orderCrossover(parent1, parent2);
+						case "Cycle" -> cycleCrossover(parent1, parent2);
+						default -> pmxCrossover(parent1, parent2);
+					};
 				} else {
 					ArrayList<Individual> temp = new ArrayList<>();
 					temp.add(parent1);
@@ -101,26 +87,13 @@ public class EA extends Observable implements Runnable {
 				}
 
 				if (random.nextDouble() < mutationRate) {
-					switch(mutation){
-						case "Swap":
-							children = mutateSwap(children);
-							break;
-
-						case "Scramble":
-							children = mutateScramble(children);
-							break;
-
-						case "Invert":
-							children = mutateInvert(children);
-							break;
-
-						case "2-opt":
-							children = mutate2Opt(children);
-							break;
-
-						default:
-							children = mutateScramble(children);
-					}
+					children = switch (mutation) {
+						case "Swap" -> mutateSwap(children);
+						case "Scramble" -> mutateScramble(children);
+						case "Invert" -> mutateInvert(children);
+						case "2-opt" -> mutate2Opt(children);
+						default -> mutateScramble(children);
+					};
 				}
 
 				for (Individual child : children) {
