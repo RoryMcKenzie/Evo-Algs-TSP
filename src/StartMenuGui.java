@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.util.ArrayList;
 
 public class StartMenuGui {
     private JButton startButton;
@@ -11,7 +10,6 @@ public class StartMenuGui {
     private JComboBox comboBoxInstance;
 
     public StartMenuGui() {
-        ArrayList<EA> eas = new ArrayList<>();
         startButton.addActionListener(e -> {
             //should probably have an error if spinnerIterations.getValue() < 1, but still works
             for (int j = 0; j < (Integer)spinnerIterations.getValue(); j++) {

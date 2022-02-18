@@ -77,7 +77,6 @@ public class EA extends Observable implements Runnable {
 						case "PMX" -> pmxCrossover(parent1, parent2);
 						case "Order" -> orderCrossover(parent1, parent2);
 						case "Cycle" -> cycleCrossover(parent1, parent2);
-						default -> pmxCrossover(parent1, parent2);
 					};
 				} else {
 					ArrayList<Individual> temp = new ArrayList<>();
@@ -92,7 +91,6 @@ public class EA extends Observable implements Runnable {
 						case "Scramble" -> mutateScramble(children);
 						case "Invert" -> mutateInvert(children);
 						case "2-opt" -> mutate2Opt(children);
-						default -> mutateScramble(children);
 					};
 				}
 
