@@ -2,15 +2,15 @@ import java.util.*;
 
 public class EA extends Observable implements Runnable {
 
-	public EA(String crossover, String mutation){
+	public EA(String crossover, String mutation, String instance){
 		this.crossover = crossover;
 		this.mutation = mutation;
+		this.filename = instance;
 	}
 
 	private static final Object lock = new Object();
 //	String filename = "dj38.tsp";
 //	String filename = "dsj1000.tsp";// optimal 18,659,688 or 1.8 E7 Concorde gets 18659
-//	String filename = "rat99.tsp";// optimal 1211
 //  String filename = "burma14.tsp";
     String filename = "berlin52.tsp";// 7542
 	Problem problem = new Problem(filename);

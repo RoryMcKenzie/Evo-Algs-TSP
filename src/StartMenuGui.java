@@ -1,8 +1,5 @@
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class StartMenuGui {
     private JButton startButton;
@@ -11,13 +8,14 @@ public class StartMenuGui {
     private JComboBox comboBoxMutation;
     private JComboBox comboBoxCrossover;
     private JSpinner spinnerIterations;
+    private JComboBox comboBoxInstance;
 
     public StartMenuGui() {
         ArrayList<EA> eas = new ArrayList<>();
         startButton.addActionListener(e -> {
             //should probably have an error if spinnerIterations.getValue() < 1, but still works
             for (int j = 0; j < (Integer)spinnerIterations.getValue(); j++) {
-                    EA ea = new EA(comboBoxCrossover.getSelectedItem().toString(), comboBoxMutation.getSelectedItem().toString());
+                    EA ea = new EA(comboBoxCrossover.getSelectedItem().toString(), comboBoxMutation.getSelectedItem().toString(), comboBoxInstance.getSelectedItem().toString());
                     if (GUICheckBox.isSelected()) {
                         Gui gui = new Gui(j);
                         ea.addObserver(gui);
@@ -43,6 +41,12 @@ public class StartMenuGui {
         comboBoxMutation.addItem("Scramble");
         comboBoxMutation.addItem("Invert");
         comboBoxMutation.addItem("2-opt");
+
+        comboBoxInstance.addItem("berlin52.tsp");
+        comboBoxInstance.addItem("burma14.tsp");
+        comboBoxInstance.addItem("dj38.tsp");
+        comboBoxInstance.addItem("dsj1000.tsp");
+
 
         GUICheckBox.setSelected(true);
 
