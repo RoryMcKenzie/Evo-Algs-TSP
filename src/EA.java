@@ -19,7 +19,7 @@ public class EA extends Observable implements Runnable {
 	static Random random = new Random();
 	ArrayList<Individual> population;
 	Individual best;
-	int popSize = 50;
+	int popSize = 500;
 	int tournamentSize = 5;
 	int maxGenerations = 1000;
 	int generation;
