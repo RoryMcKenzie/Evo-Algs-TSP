@@ -11,15 +11,15 @@ public class EA extends Observable implements Runnable {
 //	String filename = "dj38.tsp";
 //	String filename = "dsj1000.tsp";// optimal 18,659,688 or 1.8 E7 Concorde gets 18659
 //	String filename = "rat99.tsp";// optimal 1211
-//	String filename = "burma14.tsp";
-	String filename = "berlin52.tsp";// 7542
+//  String filename = "burma14.tsp";
+    String filename = "berlin52.tsp";// 7542
 	Problem problem = new Problem(filename);
 	String mutation;
 	String crossover;
 	static Random random = new Random();
 	ArrayList<Individual> population;
 	Individual best;
-	int popSize = 500;
+	int popSize = 50;
 	int tournamentSize = 5;
 	int maxGenerations = 1000;
 	int generation;
@@ -130,12 +130,12 @@ public class EA extends Observable implements Runnable {
 				}
 
 				// pause so can see the effect
-				try {
-					Thread.sleep(pause);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+//				try {
+//					Thread.sleep(pause);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 			}
 			synchronized (lock) {
 				population = pop2;
@@ -156,7 +156,8 @@ public class EA extends Observable implements Runnable {
 		} */
 		setChanged();
 		notifyObservers(best);
-		printStats(1000);
+		printStats(generation);
+		//Somehow StartMenuGui needs to be aware that the thread has been interrupted
 		Thread.currentThread().interrupt();
 		//System.out.println(theIslandBest.fitness);
 	}

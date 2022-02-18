@@ -65,6 +65,7 @@ public class Gui extends JFrame implements Observer{
 		individual = (Individual) arg1;
 		generation = ((EA)arg0).generation;
 		repaint();
+
 	
 	}
 
