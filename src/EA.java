@@ -31,7 +31,7 @@ public class EA extends Observable implements Runnable {
 
 	@Override
 	public void run() {
-		problem = new Problem(filename);
+		problem = new Problem(filename + ".tsp");
 		population = new ArrayList<>();
 
 		// initialise population. The Individual constructor generates a random
@@ -144,6 +144,7 @@ public class EA extends Observable implements Runnable {
 	}
 
 	private void writeStats(){
+		//String filename_cut = filename.substring(0, filename.length()-4);
 		String writename = crossover + "_" + mutation + "_" + filename + ".csv";
 		try{
 			FileWriter myWriter = new FileWriter("results/" + writename, true);

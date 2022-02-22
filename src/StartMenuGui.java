@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.io.File;
 
 public class StartMenuGui {
     private JButton startButton;
@@ -11,6 +12,14 @@ public class StartMenuGui {
 
     public StartMenuGui() {
         startButton.addActionListener(e -> {
+            String writename = comboBoxCrossover.getSelectedItem() + "_" + comboBoxMutation.getSelectedItem() + "_" + comboBoxInstance.getSelectedItem().toString() + ".csv";
+
+            File myObj = new File("results/" + writename);
+            if (myObj.delete()) {
+                System.out.println("Deleted the file: " + myObj.getName());
+            } else {
+                System.out.println("Failed to delete the file.");
+            }
             //should probably have an error if spinnerIterations.getValue() < 1, but still works
             for (int j = 0; j < (Integer)spinnerIterations.getValue(); j++) {
                     EA ea = new EA(comboBoxCrossover.getSelectedItem().toString(), comboBoxMutation.getSelectedItem().toString(), comboBoxInstance.getSelectedItem().toString());
@@ -40,10 +49,10 @@ public class StartMenuGui {
         comboBoxMutation.addItem("Invert");
         comboBoxMutation.addItem("2-opt");
 
-        comboBoxInstance.addItem("berlin52.tsp");
-        comboBoxInstance.addItem("burma14.tsp");
-        comboBoxInstance.addItem("dj38.tsp");
-        comboBoxInstance.addItem("dsj1000.tsp");
+        comboBoxInstance.addItem("berlin52");
+        comboBoxInstance.addItem("burma14");
+        comboBoxInstance.addItem("dj38");
+        comboBoxInstance.addItem("dsj1000");
 
         GUICheckBox.setSelected(false);
         spinnerIterations.setValue(10);
