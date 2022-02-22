@@ -6,16 +6,18 @@ import java.util.*;
 
 public class EA extends Observable implements Runnable {
 
-	public EA(String crossover, String mutation, String instance){
+	public EA(String crossover, String mutation, String instance, Integer number){
 		this.crossover = crossover;
 		this.mutation = mutation;
 		this.filename = instance;
+		this.number = number;
 	}
 
 	private static final Object lock = new Object();
 	String filename;
 	String mutation;
 	String crossover;
+	int number;
 	Problem problem;
 	static Random random = new Random();
 	ArrayList<Individual> population;
@@ -145,7 +147,7 @@ public class EA extends Observable implements Runnable {
 
 	private void writeStats(){
 		//String filename_cut = filename.substring(0, filename.length()-4);
-		String writename = crossover + "_" + mutation + "_" + filename + ".csv";
+		String writename = crossover + "_" + mutation + "_" + filename +  "_" + number  + ".csv";
 		try{
 			FileWriter myWriter = new FileWriter("results/" + writename, true);
 			myWriter.write(best.fitness + ",");

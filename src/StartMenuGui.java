@@ -12,7 +12,7 @@ public class StartMenuGui {
 
     public StartMenuGui() {
         startButton.addActionListener(e -> {
-            String writename = comboBoxCrossover.getSelectedItem() + "_" + comboBoxMutation.getSelectedItem() + "_" + comboBoxInstance.getSelectedItem().toString() + ".csv";
+            String writename = comboBoxCrossover.getSelectedItem() + "_" + comboBoxMutation.getSelectedItem() + "_" + comboBoxInstance.getSelectedItem().toString() + "_" + spinnerIterations.getValue() + ".csv";
 
             File myObj = new File("results/" + writename);
             if (myObj.delete()) {
@@ -22,7 +22,7 @@ public class StartMenuGui {
             }
             //should probably have an error if spinnerIterations.getValue() < 1, but still works
             for (int j = 0; j < (Integer)spinnerIterations.getValue(); j++) {
-                    EA ea = new EA(comboBoxCrossover.getSelectedItem().toString(), comboBoxMutation.getSelectedItem().toString(), comboBoxInstance.getSelectedItem().toString());
+                    EA ea = new EA(comboBoxCrossover.getSelectedItem().toString(), comboBoxMutation.getSelectedItem().toString(), comboBoxInstance.getSelectedItem().toString(), (Integer) spinnerIterations.getValue());
                     if (GUICheckBox.isSelected()) {
                         Gui gui = new Gui(j);
                         ea.addObserver(gui);
