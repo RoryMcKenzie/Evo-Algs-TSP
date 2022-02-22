@@ -45,10 +45,8 @@ public class StartMenuGui {
         comboBoxInstance.addItem("dj38.tsp");
         comboBoxInstance.addItem("dsj1000.tsp");
 
-
-        GUICheckBox.setSelected(true);
-
-        spinnerIterations.setValue(1);
+        GUICheckBox.setSelected(false);
+        spinnerIterations.setValue(10);
     }
 
     public static void main (String[] args){

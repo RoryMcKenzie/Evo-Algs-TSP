@@ -1,3 +1,7 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public class EA extends Observable implements Runnable {
@@ -77,6 +81,7 @@ public class EA extends Observable implements Runnable {
 						case "PMX" -> pmxCrossover(parent1, parent2);
 						case "Order" -> orderCrossover(parent1, parent2);
 						case "Cycle" -> cycleCrossover(parent1, parent2);
+						default -> pmxCrossover(parent1, parent2);
 					};
 				} else {
 					ArrayList<Individual> temp = new ArrayList<>();
@@ -91,6 +96,7 @@ public class EA extends Observable implements Runnable {
 						case "Scramble" -> mutateScramble(children);
 						case "Invert" -> mutateInvert(children);
 						case "2-opt" -> mutate2Opt(children);
+						default -> mutateSwap(children);
 					};
 				}
 
@@ -128,7 +134,7 @@ public class EA extends Observable implements Runnable {
 		setChanged();
 		notifyObservers(best);
 		printStats(generation);
-		//Somehow StartMenuGui needs to be aware that the thread has been interrupted
+		writeStats();
 		Thread.currentThread().interrupt();
 		//System.out.println(theIslandBest.fitness);
 	}
@@ -137,6 +143,17 @@ public class EA extends Observable implements Runnable {
 		System.out.println(generation + "\t" + best.fitness);
 	}
 
+	private void writeStats(){
+		String writename = crossover + "_" + mutation + "_" + filename + ".csv";
+		try{
+			FileWriter myWriter = new FileWriter("results/" + writename, true);
+			myWriter.write(best.fitness + ",");
+			myWriter.close();
+		} catch (IOException e){
+			System.out.println("error");
+			e.printStackTrace();
+		}
+	}
 	private Individual getBest() {
 		Individual bestInPop = null;
 		for (Individual individual : population) {
