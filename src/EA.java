@@ -123,6 +123,9 @@ public class EA extends Observable implements Runnable {
 			if (bestCandidate.fitness < best.fitness) {
 				best = bestCandidate;
 			}
+			if(generation % 100 == 0){
+				System.out.println(generation);
+			}
 			//printStats(generation);
 			setChanged();
 			notifyObservers(bestCandidate);

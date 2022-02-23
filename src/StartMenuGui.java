@@ -53,6 +53,7 @@ public class StartMenuGui {
         comboBoxInstance.addItem("burma14");
         comboBoxInstance.addItem("dj38");
         comboBoxInstance.addItem("dsj1000");
+        comboBoxInstance.addItem("gr666");
 
         GUICheckBox.setSelected(false);
         spinnerIterations.setValue(10);
