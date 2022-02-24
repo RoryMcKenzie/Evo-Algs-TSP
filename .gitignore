@@ -6,6 +6,7 @@
 .project
 .classpath
 .Concorde/
+results/
 
 # Compiled class file
 *.class
