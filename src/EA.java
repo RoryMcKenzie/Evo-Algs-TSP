@@ -1,5 +1,3 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
@@ -41,7 +39,6 @@ public class EA extends Observable implements Runnable {
 		for (int i = 0; i < popSize; i++) {
 			Individual individual = new Individual(problem);
 			population.add(individual);
-			// System.out.println(individual);
 		}
 		best = getBest();
 		generation = 0;
@@ -123,13 +120,13 @@ public class EA extends Observable implements Runnable {
 			if (bestCandidate.fitness < best.fitness) {
 				best = bestCandidate;
 			}
-			if(generation % 100 == 0){
+			if(generation % 1000 == 0){
 				System.out.println(generation);
 			}
 			//printStats(generation);
 			setChanged();
 			notifyObservers(bestCandidate);
-			writeStats();
+			//writeStats();
 		}
 		/*Individual theIslandBest = null;
 		 for(EA ea : islands) {
@@ -140,7 +137,7 @@ public class EA extends Observable implements Runnable {
 		setChanged();
 		notifyObservers(best);
 		printStats(generation);
-		//writeStats();
+		writeStats();
 		Thread.currentThread().interrupt();
 		//System.out.println(theIslandBest.fitness);
 	}
@@ -153,7 +150,7 @@ public class EA extends Observable implements Runnable {
 		String writename = crossover + "_" + mutation + "_" + filename +  "_" + number  + ".csv";
 		try{
 			FileWriter myWriter = new FileWriter("results/" + filename + "/" + writename, true);
-			myWriter.write(best.fitness + "\n");
+			myWriter.write(best.fitness + "," + best.toString() + "\n");
 			myWriter.close();
 		} catch (IOException e){
 			System.out.println("error");
