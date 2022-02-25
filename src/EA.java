@@ -24,7 +24,7 @@ public class EA extends Observable implements Runnable {
 	Individual best;
 	int popSize = 500;
 	int tournamentSize = 5;
-	int maxGenerations = 1000;
+	int maxGenerations = 20000;
 	int generation;
 	int pause = 0;// set to zero for max speed
 	double mutationRate = 0.5;
@@ -129,6 +129,7 @@ public class EA extends Observable implements Runnable {
 			//printStats(generation);
 			setChanged();
 			notifyObservers(bestCandidate);
+			writeStats();
 		}
 		/*Individual theIslandBest = null;
 		 for(EA ea : islands) {
@@ -139,7 +140,7 @@ public class EA extends Observable implements Runnable {
 		setChanged();
 		notifyObservers(best);
 		printStats(generation);
-		writeStats();
+		//writeStats();
 		Thread.currentThread().interrupt();
 		//System.out.println(theIslandBest.fitness);
 	}
@@ -149,11 +150,10 @@ public class EA extends Observable implements Runnable {
 	}
 
 	private void writeStats(){
-		//String filename_cut = filename.substring(0, filename.length()-4);
 		String writename = crossover + "_" + mutation + "_" + filename +  "_" + number  + ".csv";
 		try{
 			FileWriter myWriter = new FileWriter("results/" + writename, true);
-			myWriter.write(best.fitness + ",");
+			myWriter.write(best.fitness + "\n");
 			myWriter.close();
 		} catch (IOException e){
 			System.out.println("error");
