@@ -14,7 +14,7 @@ public class StartMenuGui {
         startButton.addActionListener(e -> {
             String writename = comboBoxCrossover.getSelectedItem() + "_" + comboBoxMutation.getSelectedItem() + "_" + comboBoxInstance.getSelectedItem().toString() + "_" + spinnerIterations.getValue() + ".csv";
 
-            File myObj = new File("results/" + writename);
+            File myObj = new File("results/" + comboBoxInstance.getSelectedItem() + "/" + writename);
             if (myObj.delete()) {
                 System.out.println("Deleted the file: " + myObj.getName());
             } else {

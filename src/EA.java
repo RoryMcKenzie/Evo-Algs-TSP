@@ -152,7 +152,7 @@ public class EA extends Observable implements Runnable {
 	private void writeStats(){
 		String writename = crossover + "_" + mutation + "_" + filename +  "_" + number  + ".csv";
 		try{
-			FileWriter myWriter = new FileWriter("results/" + writename, true);
+			FileWriter myWriter = new FileWriter("results/" + filename + "/" + writename, true);
 			myWriter.write(best.fitness + "\n");
 			myWriter.close();
 		} catch (IOException e){
