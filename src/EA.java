@@ -95,6 +95,7 @@ public class EA extends Observable implements Runnable {
 						case "Scramble" -> mutateScramble(children);
 						case "Invert" -> mutateInvert(children);
 						case "2-opt" -> mutate2Opt(children);
+						case "Insert" -> mutateInsert(children);
 						default -> mutateSwap(children);
 					};
 				}
@@ -102,7 +103,7 @@ public class EA extends Observable implements Runnable {
 				for (Individual child : children) {
 					child.evaluate();
 					pop2.add(child);
-					// replace(child);
+					//replace(child);
 				}
 
 				// pause so can see the effect
@@ -121,7 +122,7 @@ public class EA extends Observable implements Runnable {
 				best = bestCandidate;
 			}
 			if(generation % 1000 == 0){
-				System.out.println(generation);
+				System.out.println(generation + ": " + best.fitness);
 			}
 			//printStats(generation);
 			setChanged();
@@ -150,13 +151,15 @@ public class EA extends Observable implements Runnable {
 		String writename = crossover + "_" + mutation + "_" + filename +  "_" + number  + ".csv";
 		try{
 			FileWriter myWriter = new FileWriter("results/" + filename + "/" + writename, true);
-			myWriter.write(best.fitness + "," + best.toString() + "\n");
+			myWriter.write(best.fitness + "," + best + "\n");
+			//myWriter.write(best.fitness + "\n");
 			myWriter.close();
 		} catch (IOException e){
 			System.out.println("error");
 			e.printStackTrace();
 		}
 	}
+
 	private Individual getBest() {
 		Individual bestInPop = null;
 		for (Individual individual : population) {
@@ -189,7 +192,9 @@ public class EA extends Observable implements Runnable {
 	//2-opt mutation
 	private ArrayList<Individual> mutate2Opt(ArrayList<Individual> children) {
 		ArrayList<Individual> result = new ArrayList<>();
+
 		for (Individual child : children) {
+			//gets cut point
 			int cut1 = random.nextInt(child.chromosome.size() - 1);
 			int cut2 = cut1 + random.nextInt(child.chromosome.size() - cut1);
 			Individual individual = new Individual(problem);
@@ -269,6 +274,30 @@ public class EA extends Observable implements Runnable {
 				child.chromosome.set(i, x.get(j));
 				j++;
 			} */
+		}
+		return children;
+	}
+
+	// insert mutation
+	private ArrayList<Individual> mutateInsert(ArrayList <Individual> children){
+		ArrayList<Individual> result = new ArrayList<>();
+
+		for (Individual child : children){
+			int insertCut1 = random.nextInt(child.chromosome.size());
+			int insertCut2 = random.nextInt(child.chromosome.size());
+
+			//swap cut points if the second > the first
+			if (insertCut1 > insertCut2) {
+				int temp = insertCut1;
+				insertCut1 = insertCut2;
+				insertCut2 = temp;
+			}
+
+			for (int i = insertCut2 -1; i >insertCut1; i--){
+				Location temp2 = child.chromosome.get(i+1);
+				child.chromosome.set(i+1, child.chromosome.get(i));
+				child.chromosome.set(i, temp2);
+			}
 		}
 		return children;
 	}
@@ -381,7 +410,7 @@ public class EA extends Observable implements Runnable {
 		// fill in remainder of child1 based on map;
 		for (int i = 0; i < parent1.chromosome.size(); i++) {
 			if (child1.chromosome.get(i) == null) {
-				Boolean filled = false;
+				boolean filled = false;
 				// this value is already in the child as it wasn't set in previous steps
 				Location locFromParent = parent1.chromosome.get(i);
 				while (!filled) {
@@ -402,7 +431,7 @@ public class EA extends Observable implements Runnable {
 		// do the same for child2
 		for (int i = 0; i < parent1.chromosome.size(); i++) {
 			if (child2.chromosome.get(i) == null) {
-				Boolean filled = false;
+				boolean filled = false;
 				// this value is already in the child as it wasn't set in previous steps
 				Location locFromParent = parent2.chromosome.get(i);
 				while (!filled) {
@@ -581,8 +610,6 @@ public class EA extends Observable implements Runnable {
 		return null;
 	}
 	//SELECTION
-
-	//Add Roulette Selection, preliminary testing to figure out which is better
 
 	//Tournament Selection
 	private Individual select() {
