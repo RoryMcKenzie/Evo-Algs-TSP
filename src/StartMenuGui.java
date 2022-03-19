@@ -1,11 +1,13 @@
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 
 public class StartMenuGui {
     private JButton startButton;
     private JPanel panel1;
-    private JCheckBox GUICheckBox;
+    //private JCheckBox GUICheckBox;
     private JComboBox comboBoxMutation;
     private JComboBox comboBoxCrossover;
     private JSpinner spinnerIterations;
@@ -18,7 +20,6 @@ public class StartMenuGui {
         startButton.addActionListener(e -> {
 
             if (RunAllCheckBox.isSelected()){
-
             String crossover;
             String mutation;
 
@@ -44,9 +45,6 @@ public class StartMenuGui {
                     mutation = "2-opt";
                 }
 
-
-                //String writename = comboBoxCrossover.getSelectedItem() + "_" + comboBoxMutation.getSelectedItem() + "_" + comboBoxInstance.getSelectedItem().toString() + "_" + spinnerIterations.getValue() + ".csv";
-
                 String writename = crossover + "_" + mutation + "_" + comboBoxInstance.getSelectedItem() + "_" + spinnerIterations.getValue() + ".csv";
 
                 File myObj = new File("results/" + comboBoxInstance.getSelectedItem() + "/" + writename);
@@ -58,10 +56,10 @@ public class StartMenuGui {
                 //should probably have an error if spinnerIterations.getValue() < 1, but still works
                 for (int j = 0; j < (Integer) spinnerIterations.getValue(); j++) {
                     EA ea = new EA(crossover, mutation, comboBoxInstance.getSelectedItem().toString(), (Integer) spinnerIterations.getValue());
-                    if (GUICheckBox.isSelected()) {
+                    /*if (GUICheckBox.isSelected()) {
                         Gui gui = new Gui(j);
                         ea.addObserver(gui);
-                    }
+                    } */
                     Thread t = new Thread(ea);
                     t.start();
                     threads.add(t);
@@ -86,10 +84,10 @@ public class StartMenuGui {
                 //should probably have an error if spinnerIterations.getValue() < 1, but still works
                 for (int j = 0; j < (Integer) spinnerIterations.getValue(); j++) {
                     EA ea = new EA(comboBoxCrossover.getSelectedItem().toString(), comboBoxMutation.getSelectedItem().toString(), comboBoxInstance.getSelectedItem().toString(), (Integer) spinnerIterations.getValue());
-                    if (GUICheckBox.isSelected()) {
+                   /* if (GUICheckBox.isSelected()) {
                         Gui gui = new Gui(j);
                         ea.addObserver(gui);
-                    }
+                    } */
                     Thread t = new Thread(ea);
                     t.start();
                 }
@@ -101,21 +99,29 @@ public class StartMenuGui {
 
         comboBoxMutation.addItem("Swap");
         comboBoxMutation.addItem("Scramble");
-        comboBoxMutation.addItem("Invert");
-        comboBoxMutation.addItem("2-opt");
         comboBoxMutation.addItem("Insert");
-
+        comboBoxMutation.addItem("2-opt");
 
         comboBoxInstance.addItem("berlin52");
-        comboBoxInstance.addItem("burma14");
-        comboBoxInstance.addItem("dj38");
-        comboBoxInstance.addItem("dsj1000");
-        comboBoxInstance.addItem("gr666");
         comboBoxInstance.addItem("rat99");
         comboBoxInstance.addItem("rd400");
 
-        GUICheckBox.setSelected(false);
+
+        //GUICheckBox.setSelected(false);
         spinnerIterations.setValue(10);
+        RunAllCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (RunAllCheckBox.isSelected()){
+                    comboBoxCrossover.setEnabled(false);
+                    comboBoxMutation.setEnabled(false);
+
+                } else {
+                    comboBoxCrossover.setEnabled(true);
+                    comboBoxMutation.setEnabled(true);
+                }
+            }
+        });
     }
 
     public static void main (String[] args){
@@ -124,6 +130,6 @@ public class StartMenuGui {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-        frame.setSize(500,300);
+        frame.setSize(500,325);
     }
 }
