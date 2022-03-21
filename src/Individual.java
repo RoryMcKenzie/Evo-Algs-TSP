@@ -3,9 +3,9 @@ import java.util.Collection;
 
 public class Individual {
 	
-	Location depot;
-	ArrayList<Location> chromosome;
-	double fitness = -1;
+	public Location depot;
+	public ArrayList<Location> chromosome;
+	public double fitness = -1;
 	
 	public Individual() {
 		

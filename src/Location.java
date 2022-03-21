@@ -1,8 +1,8 @@
 
 public class Location {
-	int idx;
-	double x;
-	double y;
+	public int idx;
+	public double x;
+	public double y;
 	public Location(int idx, double x, double y) {
 		super();
 		this.idx = idx;

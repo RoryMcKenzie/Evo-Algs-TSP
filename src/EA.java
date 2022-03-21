@@ -12,21 +12,20 @@ public class EA extends Observable implements Runnable {
 	}
 
 	private static final Object lock = new Object();
-	String filename;
-	String mutation;
-	String crossover;
-	int number;
-	Problem problem;
-	static Random random = new Random();
-	ArrayList<Individual> population;
-	Individual best;
-	int popSize = 500;
-	int tournamentSize = 5;
-	int maxGenerations = 20000;
-	int generation;
-	int pause = 0;// set to zero for max speed
-	double mutationRate = 0.5;
-	double crossoverRate = 0.85;
+	private String filename;
+	private String mutation;
+	private String crossover;
+	private int number;
+	private Problem problem;
+	public static Random random = new Random();
+	private ArrayList<Individual> population;
+	private Individual best;
+	private int popSize = 500;
+	private int maxGenerations = 20000;
+	//public because Gui.java uses it, change after
+	public int generation;
+	private double mutationRate = 0.5;
+	private double crossoverRate = 0.85;
 	//private ArrayList<EA> islands;
 
 	@Override
@@ -106,13 +105,6 @@ public class EA extends Observable implements Runnable {
 					//replace(child);
 				}
 
-				// pause so can see the effect
-//				try {
-//					Thread.sleep(pause);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
 			}
 			synchronized (lock) {
 				population = pop2;
@@ -280,8 +272,6 @@ public class EA extends Observable implements Runnable {
 
 	// insert mutation
 	private ArrayList<Individual> mutateInsert(ArrayList <Individual> children){
-		ArrayList<Individual> result = new ArrayList<>();
-
 		for (Individual child : children){
 			int insertCut1 = random.nextInt(child.chromosome.size());
 			int insertCut2 = random.nextInt(child.chromosome.size());
@@ -331,7 +321,7 @@ public class EA extends Observable implements Runnable {
 		oxchild2.chromosome.addAll(parent2.chromosome.subList(oxPoint1,oxPoint2));
 
 		//declare variables for loop
-		int currentIndex = 0;
+		int currentIndex;
 
 		for (int i = 0; i <= size; i++){
 			currentIndex = (oxPoint1 + i) % size;
@@ -614,6 +604,7 @@ public class EA extends Observable implements Runnable {
 	//Tournament Selection
 	private Individual select() {
 		Individual winner = population.get(random.nextInt(popSize));
+		int tournamentSize = 5;
 		for (int i = 1; i < tournamentSize; i++) {
 			Individual candidate2 = population.get(random.nextInt(popSize));
 			if (candidate2.fitness < winner.fitness) {

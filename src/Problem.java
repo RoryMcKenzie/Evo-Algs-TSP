@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 public class Problem {
 	//Starting location
-	Location depot;
-	ArrayList<Location> customers;
+	public Location depot;
+	public ArrayList<Location> customers;
 	
 	public Problem(String filename) {
 		customers = new ArrayList<>();
