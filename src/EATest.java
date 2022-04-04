@@ -1,10 +1,6 @@
-import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 class EATest {
-
 
     @org.junit.jupiter.api.Test
     void mutate2Opt() {
@@ -17,7 +13,7 @@ class EATest {
         temp.add(parent1);
         temp.add(parent2);
 
-        EA x = new EA("PMX", "Swap", "berlin52", 3);
+        EA x = new EA("PMX", "Swap", "berlin52", 1);
 
         x.problem = new Problem("berlin52.tsp");
 
@@ -34,16 +30,17 @@ class EATest {
         Individual parent1 = new Individual(problem);
         Individual parent2 = new Individual(problem);
 
-        ArrayList<Individual> temp = new ArrayList<>();
-        temp.add(parent1);
-        temp.add(parent2);
+        ArrayList<Individual> children = new ArrayList<>();
+        children.add(parent1);
+        children.add(parent2);
 
-        EA x = new EA("PMX", "Swap", "1", 3);
+        EA x = new EA("PMX", "Swap", "berlin52", 1);
 
-       ArrayList<Individual> after = x.mutateSwap(temp);
+
+        ArrayList<Individual> after = x.mutateSwap(children);
 
         assert (after instanceof ArrayList<Individual>);
-        assert (after.size() == temp.size());
+        assert (after.size() == children.size());
     }
 
     @org.junit.jupiter.api.Test
@@ -57,7 +54,7 @@ class EATest {
         temp.add(parent1);
         temp.add(parent2);
 
-        EA x = new EA("PMX", "Swap", "1", 3);
+        EA x = new EA("PMX", "Swap", "berlin52", 1);
 
         ArrayList<Individual> after = x.mutateScramble(temp);
 
@@ -76,7 +73,7 @@ class EATest {
         temp.add(parent1);
         temp.add(parent2);
 
-        EA x = new EA("PMX", "Swap", "1", 3);
+        EA x = new EA("PMX", "Swap", "berlin52", 1);
 
         ArrayList<Individual> after = x.mutateInsert(temp);
 
@@ -91,7 +88,7 @@ class EATest {
         Individual parent1 = new Individual(problem);
         Individual parent2 = new Individual(problem);
 
-        EA x = new EA("PMX", "Swap", "1", 3);
+        EA x = new EA("PMX", "Swap", "berlin52", 1);
 
         ArrayList<Individual> after = x.orderCrossover(parent1,parent2);
 
@@ -106,7 +103,7 @@ class EATest {
         Individual parent1 = new Individual(problem);
         Individual parent2 = new Individual(problem);
 
-        EA x = new EA("PMX", "Swap", "1", 3);
+        EA x = new EA("PMX", "Swap", "berlin52", 1);
 
         ArrayList<Individual> after = x.pmxCrossover(parent1,parent2);
 
@@ -121,7 +118,7 @@ class EATest {
         Individual parent1 = new Individual(problem);
         Individual parent2 = new Individual(problem);
 
-        EA x = new EA("PMX", "Swap", "1", 3);
+        EA x = new EA("PMX", "Swap", "berlin52", 1);
 
         ArrayList<Individual> after = x.cycleCrossover(parent1,parent2);
 
