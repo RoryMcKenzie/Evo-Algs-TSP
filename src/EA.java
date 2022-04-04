@@ -16,7 +16,7 @@ public class EA extends Observable implements Runnable {
 	private String mutation;
 	private String crossover;
 	private int number;
-	private Problem problem;
+	public Problem problem;
 	public static Random random = new Random();
 	private ArrayList<Individual> population;
 	private Individual best;
@@ -182,7 +182,7 @@ public class EA extends Observable implements Runnable {
 	//MUTATION
 
 	//2-opt mutation
-	private ArrayList<Individual> mutate2Opt(ArrayList<Individual> children) {
+	public ArrayList<Individual> mutate2Opt(ArrayList<Individual> children) {
 		ArrayList<Individual> result = new ArrayList<>();
 
 		for (Individual child : children) {
@@ -207,7 +207,7 @@ public class EA extends Observable implements Runnable {
 	}
 
 	// swap mutation
-	private ArrayList<Individual> mutateSwap(ArrayList<Individual> children) {
+	public ArrayList<Individual> mutateSwap(ArrayList<Individual> children) {
 		for (Individual child : children) {
 			Location temp;
 			int idx1 = random.nextInt(child.chromosome.size());
@@ -220,7 +220,7 @@ public class EA extends Observable implements Runnable {
 		return children;
 	}
 
-	private ArrayList<Individual> mutateScramble(ArrayList<Individual> children){
+	public ArrayList<Individual> mutateScramble(ArrayList<Individual> children){
 		for (Individual child : children){
 			int scrambleCut1 = random.nextInt(child.chromosome.size());
 			int scrambleCut2 = random.nextInt(child.chromosome.size());
@@ -271,7 +271,7 @@ public class EA extends Observable implements Runnable {
 	}
 
 	// insert mutation
-	private ArrayList<Individual> mutateInsert(ArrayList <Individual> children){
+	public ArrayList<Individual> mutateInsert(ArrayList <Individual> children){
 		for (Individual child : children){
 			int insertCut1 = random.nextInt(child.chromosome.size());
 			int insertCut2 = random.nextInt(child.chromosome.size());
@@ -294,7 +294,7 @@ public class EA extends Observable implements Runnable {
 
 	//CROSSOVER
 
-	private ArrayList<Individual> orderCrossover(Individual parent1, Individual parent2) {
+	public ArrayList<Individual> orderCrossover(Individual parent1, Individual parent2) {
 		int size = parent1.chromosome.size();
 
 		//generate cut points
@@ -347,7 +347,7 @@ public class EA extends Observable implements Runnable {
 		return children;
 	}
 
-	private ArrayList<Individual> pmxCrossover(Individual parent1, Individual parent2) {
+	public ArrayList<Individual> pmxCrossover(Individual parent1, Individual parent2) {
 		//generate start and end numbers to cut
 		int xPoint1 = random.nextInt(parent1.chromosome.size());
 		int xPoint2 = random.nextInt(parent1.chromosome.size());
@@ -454,7 +454,7 @@ public class EA extends Observable implements Runnable {
 		return children;
 	}
 
-	private ArrayList<Individual> cycleCrossover(Individual parent1, Individual parent2){
+	public ArrayList<Individual> cycleCrossover(Individual parent1, Individual parent2){
 		int length = parent1.chromosome.size();
 
 		//Initialise 2 children, set chromosome to parents' to make later easier
@@ -515,70 +515,6 @@ public class EA extends Observable implements Runnable {
 
 	// simple crossover. Probably not very good. Long-winded with customer indices
 	//appears to just be one point crossover? won't use this but might keep
-	private ArrayList<Individual> crossover(Individual parent1, Individual parent2) {
-		Individual child = new Individual();
-		child.depot = parent1.depot.copy();
-		child.chromosome = new ArrayList<>();
-		int cutPoint = random.nextInt(parent1.chromosome.size());
-
-		// add from parent1 up to cutpoint
-		for (int i = 0; i < cutPoint; i++) {
-			child.chromosome.add(parent1.chromosome.get(i).copy());
-		}
-
-		// 1 is depot. Add all location indices
-		ArrayList<Integer> locationIndexesNotUsed = new ArrayList<>();
-		for (int i = 2; i < problem.customers.size() + 2; i++) {
-			locationIndexesNotUsed.add(i);
-		}
-
-		// remove indices copied from parent1
-		for (int i = 0; i < child.chromosome.size(); i++) {
-			int idx = child.chromosome.get(i).idx;
-			int usedIdx = locationIndexesNotUsed.indexOf(idx);
-			locationIndexesNotUsed.remove(usedIdx);
-		}
-
-		// add locations not used from cutpoint to end of parent2
-		for (int i = cutPoint; i < parent2.chromosome.size(); i++) {
-			Location loc = parent2.chromosome.get(i);
-			if (locationIndexesNotUsed.contains(loc.idx)) {
-				child.chromosome.add(loc.copy());
-				int usedIdx = locationIndexesNotUsed.indexOf(loc.idx);
-				locationIndexesNotUsed.remove(usedIdx);
-			}
-		}
-
-		// add remaining locations not in child
-		for (int i : locationIndexesNotUsed) {
-			// Problem has locations in order starting with location 2
-			Location loc = problem.customers.get(i - 2).copy();
-			child.chromosome.add(loc);
-		}
-
-		// check 1
-		if (child.chromosome.size() != parent1.chromosome.size()) {
-			System.err.println("Error in crossover wrong size " + child.chromosome.size());
-			System.exit(-1);
-		}
-
-		// check 2. All indices from 2 .. end should be included
-		ArrayList<Integer> indexCheck = new ArrayList<>();
-		for (int i = 2; i < problem.customers.size() + 2; i++) {
-			indexCheck.add(i);
-		}
-		for (Location loc : child.chromosome) {
-			int usedIdx = indexCheck.indexOf(loc.idx);
-			indexCheck.remove(usedIdx);
-		}
-		if (indexCheck.size() != 0) {
-			System.err.println("Unused indices " + child);
-			System.exit(-1);
-		}
-		ArrayList<Individual> children = new ArrayList<>();
-		children.add(child);
-		return children;
-	}
 
 	/**
 	 * Return the customer in the same position in child2 as the customer defined by
