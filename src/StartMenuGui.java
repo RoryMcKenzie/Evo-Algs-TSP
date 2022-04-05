@@ -1,13 +1,10 @@
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 
 public class StartMenuGui {
     private JButton startButton;
     private JPanel panel1;
-    //private JCheckBox GUICheckBox;
     private JComboBox comboBoxMutation;
     private JComboBox comboBoxCrossover;
     private JSpinner spinnerIterations;
@@ -53,13 +50,9 @@ public class StartMenuGui {
                 } else {
                     System.out.println("Failed to delete " + myObj.getName());
                 }
-                //should probably have an error if spinnerIterations.getValue() < 1, but still works
                 for (int j = 0; j < (Integer) spinnerIterations.getValue(); j++) {
                     EA ea = new EA(crossover, mutation, comboBoxInstance.getSelectedItem().toString(), (Integer) spinnerIterations.getValue());
-                    /*if (GUICheckBox.isSelected()) {
-                        Gui gui = new Gui(j);
-                        ea.addObserver(gui);
-                    } */
+
                     Thread t = new Thread(ea);
                     t.start();
                     threads.add(t);
@@ -81,13 +74,8 @@ public class StartMenuGui {
                 } else {
                     System.out.println("Failed to delete " + myObj.getName());
                 }
-                //should probably have an error if spinnerIterations.getValue() < 1, but still works
                 for (int j = 0; j < (Integer) spinnerIterations.getValue(); j++) {
                     EA ea = new EA(comboBoxCrossover.getSelectedItem().toString(), comboBoxMutation.getSelectedItem().toString(), comboBoxInstance.getSelectedItem().toString(), (Integer) spinnerIterations.getValue());
-                   /* if (GUICheckBox.isSelected()) {
-                        Gui gui = new Gui(j);
-                        ea.addObserver(gui);
-                    } */
                     Thread t = new Thread(ea);
                     t.start();
                 }
@@ -107,19 +95,15 @@ public class StartMenuGui {
         comboBoxInstance.addItem("rd400");
 
 
-        //GUICheckBox.setSelected(false);
         spinnerIterations.setValue(10);
-        RunAllCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (RunAllCheckBox.isSelected()){
-                    comboBoxCrossover.setEnabled(false);
-                    comboBoxMutation.setEnabled(false);
+        RunAllCheckBox.addActionListener(e -> {
+            if (RunAllCheckBox.isSelected()){
+                comboBoxCrossover.setEnabled(false);
+                comboBoxMutation.setEnabled(false);
 
-                } else {
-                    comboBoxCrossover.setEnabled(true);
-                    comboBoxMutation.setEnabled(true);
-                }
+            } else {
+                comboBoxCrossover.setEnabled(true);
+                comboBoxMutation.setEnabled(true);
             }
         });
     }

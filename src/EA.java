@@ -22,11 +22,9 @@ public class EA extends Observable implements Runnable {
 	private Individual best;
 	private int popSize = 500;
 	private int maxGenerations = 20000;
-	//public because Gui.java uses it, change after
-	public int generation;
+	private int generation;
 	private double mutationRate = 0.5;
 	private double crossoverRate = 0.85;
-	//private ArrayList<EA> islands;
 
 	@Override
 	public void run() {
@@ -47,27 +45,6 @@ public class EA extends Observable implements Runnable {
 			
 			ArrayList<Individual> pop2 = new ArrayList<>();
 
-			//seems to all be island-related, can be commented out
-			/*if(generation % 100 == 0) {
-				System.out.println("swap");
-				synchronized (lock) {
-					//same island or in loop different .... original was same island and popsize / 10
-					int idx = random.nextInt(islands.size());
-					for(int i = 0; i < popSize / 100; i++) {
-//						int idx = random.nextInt(islands.size());
-						pop2.add(islands.get(idx).population.get(random.nextInt(popSize)).copy());
-					}
-					//add best 
-//					pop2.add(islands.get(idx).best.copy());
-					
-					//add 1 from each?
-//					for(EA ea : islands) {
-//						pop2.add(ea.population.get(random.nextInt(popSize)));
-//					}
-				}				
-			} */
-			// elitism
-			
 			pop2.add(best.copy());
 			while (pop2.size() < popSize) {
 				Individual parent1 = select();
@@ -92,7 +69,6 @@ public class EA extends Observable implements Runnable {
 					children = switch (mutation) {
 						case "Swap" -> mutateSwap(children);
 						case "Scramble" -> mutateScramble(children);
-						case "Invert" -> mutateInvert(children);
 						case "2-opt" -> mutate2Opt(children);
 						case "Insert" -> mutateInsert(children);
 						default -> mutateSwap(children);
@@ -102,7 +78,6 @@ public class EA extends Observable implements Runnable {
 				for (Individual child : children) {
 					child.evaluate();
 					pop2.add(child);
-					//replace(child);
 				}
 
 			}
@@ -116,23 +91,14 @@ public class EA extends Observable implements Runnable {
 			if(generation % 1000 == 0){
 				System.out.println(generation + ": " + best.fitness);
 			}
-			//printStats(generation);
 			setChanged();
 			notifyObservers(bestCandidate);
-			//writeStats();
 		}
-		/*Individual theIslandBest = null;
-		 for(EA ea : islands) {
-			if(theIslandBest == null || ea.best.fitness < theIslandBest.fitness) {
-				theIslandBest = ea.best;
-			}
-		} */
 		setChanged();
 		notifyObservers(best);
 		printStats(generation);
 		writeStats();
 		Thread.currentThread().interrupt();
-		//System.out.println(theIslandBest.fitness);
 	}
 
 	private void printStats(int generation) {
@@ -144,7 +110,6 @@ public class EA extends Observable implements Runnable {
 		try{
 			FileWriter myWriter = new FileWriter("results/" + filename + "/" + writename, true);
 			myWriter.write(best.fitness + "," + best + "\n");
-			//myWriter.write(best.fitness + "\n");
 			myWriter.close();
 		} catch (IOException e){
 			System.out.println("error");
@@ -160,23 +125,6 @@ public class EA extends Observable implements Runnable {
 			}
 		}
 		return bestInPop.copy();
-	}
-
-	private Individual getWorst() {
-		Individual worstInPop = null;
-		for (Individual individual : population) {
-			if (worstInPop == null || individual.fitness > worstInPop.fitness) {
-				worstInPop = individual;
-			}
-		}
-		return worstInPop;
-	}
-
-	private void replace(Individual child) {
-		Individual worst = getWorst();
-		if (child.fitness < worst.fitness) {
-			population.set(population.indexOf(worst), child);
-		}
 	}
 
 	//MUTATION
@@ -206,7 +154,7 @@ public class EA extends Observable implements Runnable {
 		return result;
 	}
 
-	// swap mutation
+	//swap mutation
 	public ArrayList<Individual> mutateSwap(ArrayList<Individual> children) {
 		for (Individual child : children) {
 			Location temp;
@@ -220,6 +168,7 @@ public class EA extends Observable implements Runnable {
 		return children;
 	}
 
+	//scramble mutation
 	public ArrayList<Individual> mutateScramble(ArrayList<Individual> children){
 		for (Individual child : children){
 			int scrambleCut1 = random.nextInt(child.chromosome.size());
@@ -245,32 +194,7 @@ public class EA extends Observable implements Runnable {
 		return children;
 	}
 
-	private ArrayList<Individual> mutateInvert(ArrayList<Individual> children){
-		for (Individual child : children){
-			int invertCut1 = random.nextInt(child.chromosome.size());
-			int invertCut2 = random.nextInt(child.chromosome.size());
-
-			//swap cut points if the second > the first
-			if (invertCut1 > invertCut2) {
-				int temp = invertCut1;
-				invertCut1 = invertCut2;
-				invertCut2 = temp;
-			}
-
-			List<Location> x = child.chromosome.subList(invertCut1, invertCut2);
-
-			Collections.reverse(x);
-
-			/*int j = 0;
-			for (int i = scrambleCut1; i < scrambleCut2; i++){
-				child.chromosome.set(i, x.get(j));
-				j++;
-			} */
-		}
-		return children;
-	}
-
-	// insert mutation
+	//insert mutation
 	public ArrayList<Individual> mutateInsert(ArrayList <Individual> children){
 		for (Individual child : children){
 			int insertCut1 = random.nextInt(child.chromosome.size());
@@ -294,6 +218,7 @@ public class EA extends Observable implements Runnable {
 
 	//CROSSOVER
 
+	//order crossover
 	public ArrayList<Individual> orderCrossover(Individual parent1, Individual parent2) {
 		int size = parent1.chromosome.size();
 
@@ -347,6 +272,7 @@ public class EA extends Observable implements Runnable {
 		return children;
 	}
 
+	//PMX crossover
 	public ArrayList<Individual> pmxCrossover(Individual parent1, Individual parent2) {
 		//generate start and end numbers to cut
 		int xPoint1 = random.nextInt(parent1.chromosome.size());
@@ -454,6 +380,7 @@ public class EA extends Observable implements Runnable {
 		return children;
 	}
 
+	//cycle crossover
 	public ArrayList<Individual> cycleCrossover(Individual parent1, Individual parent2){
 		int length = parent1.chromosome.size();
 
@@ -513,18 +440,6 @@ public class EA extends Observable implements Runnable {
 		return children;
 	}
 
-	// simple crossover. Probably not very good. Long-winded with customer indices
-	//appears to just be one point crossover? won't use this but might keep
-
-	/**
-	 * Return the customer in the same position in child2 as the customer defined by
-	 * locFromParent is in child1
-	 *
-	 * @param child1
-	 * @param child2
-	 * @param locFromParent
-	 * @return
-	 */
 	private Location getMappedVal(Individual child1, Individual child2, Location locFromParent) {
 		for (int i = 0; i < child1.chromosome.size(); i++) {
 			if (child1.chromosome.get(i) != null) {
@@ -535,7 +450,6 @@ public class EA extends Observable implements Runnable {
 		}
 		return null;
 	}
-	//SELECTION
 
 	//Tournament Selection
 	private Individual select() {
@@ -548,24 +462,6 @@ public class EA extends Observable implements Runnable {
 			}
 		}
 		return winner.copy();
-	}
-
-	public static void main(String[] args) {
-		/*
-
-		//ArrayList<EA> islands = new ArrayList<>();
-		for(int i = 0; i < 20; i++) {
-			Gui gui = new Gui(i);
-			EA ea = new EA();
-			//islands.add(ea);
-			ea.addObserver(gui);
-			Thread t = new Thread(ea);
-			t.start();			
-		}
-		/*for(EA ea : islands) {
-			ea.islands = islands;
-		}			*/
-
 	}
 
 }

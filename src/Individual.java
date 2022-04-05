@@ -48,7 +48,6 @@ public class Individual {
 		for(Location l : chromosome) {
 			str += l.idx + ", ";
 		}
-		//str += fitness;
 		return str;
 	}
 
